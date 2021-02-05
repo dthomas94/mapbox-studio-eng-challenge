@@ -1,5 +1,5 @@
 import React from "react";
-import { MapView } from "./map-view";
+import { MapView } from "./MapView";
 import mapboxGl from "mapbox-gl";
 import { render, screen } from "@testing-library/react";
 
