@@ -1,11 +1,11 @@
 import React from "react";
 
-export const List = ({ items }) => {
+export const List = ({ items, onListItemClick, renderComponent }) => {
 	return (
 		<ul>
 			{items.map((item) => (
-				<li>
-					{item.name} - {item.description}
+				<li key={item.name} onClick={() => onListItemClick(item)}>
+					{renderComponent(item)}
 				</li>
 			))}
 		</ul>

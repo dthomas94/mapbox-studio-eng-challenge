@@ -6,7 +6,7 @@ import style from "./data/style.json";
 const ACCESS_TOKEN =
 	"pk.eyJ1IjoiZGFzdWxpdCIsImEiOiJjaXQzYmFjYmkwdWQ5MnBwZzEzZnNub2hhIn0.EDJ-lIfX2FnKhPw3nqHcqg";
 
-export const MapView = () => {
+export const MapView = ({ onMarkerClick }) => {
 	const mapContainer = createRef();
 	const containerEl = mapContainer;
 
@@ -42,12 +42,29 @@ export const MapView = () => {
 
 					new mapboxGl.Popup({ offset: 15 })
 						.setLngLat(coordinates)
-						.setHTML(`${name} - ${type}`)
+						.setHTML(
+							`
+							<div>
+								<span
+									id='marker-heart-icon'
+								>
+									♡
+								</span>
+								${name} - ${type}
+							</div>
+						`
+						)
 						.addTo(map);
+
+					document
+						.getElementById("marker-heart-icon")
+						.addEventListener("click", () => {
+							onMarkerClick && onMarkerClick({ name, type });
+						});
 				});
 			});
 		}
-	}, [containerEl]);
+	}, [containerEl, onMarkerClick]);
 
 	return <div ref={mapContainer} className="map-container" />;
 };
