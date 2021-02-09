@@ -1,13 +1,16 @@
 import React from "react";
 
-export const List = ({ items, onListItemClick, renderComponent }) => {
+export const List = ({ title, items, onListItemClick, renderComponent }) => {
 	return (
-		<ul>
-			{items.map((item) => (
-				<li key={item.name} onClick={() => onListItemClick(item)}>
-					{renderComponent(item)}
-				</li>
-			))}
-		</ul>
+		<div className="list">
+			<h3>{title}</h3>
+			<ul>
+				{items.map((item) => (
+					<li key={item.name} onClick={() => onListItemClick(item)}>
+						{renderComponent(item)}
+					</li>
+				))}
+			</ul>
+		</div>
 	);
 };

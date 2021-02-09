@@ -6,7 +6,7 @@ import style from "./data/style.json";
 const ACCESS_TOKEN =
 	"pk.eyJ1IjoiZGFzdWxpdCIsImEiOiJjaXQzYmFjYmkwdWQ5MnBwZzEzZnNub2hhIn0.EDJ-lIfX2FnKhPw3nqHcqg";
 
-export const MapView = ({ onMarkerClick }) => {
+export const MapView = ({ favorites, onMarkerClick }) => {
 	const mapContainer = useRef();
 	const containerEl = mapContainer;
 
@@ -28,6 +28,12 @@ export const MapView = ({ onMarkerClick }) => {
 					const coordinates = selectedFeature.geometry.coordinates.slice();
 					const name = selectedFeature.properties.name;
 					const type = selectedFeature.properties.type;
+					let isSelectedFeatureFavorited = false;
+
+					if (favorites.findIndex((favorite) => favorite.name === name) >= 0) {
+						isSelectedFeatureFavorited = true;
+					}
+					const heartIcon = isSelectedFeatureFavorited ? "♥️" : "♡";
 
 					// Ensure that if the map is zoomed out such that multiple
 					// copies of the feature are visible, the popup appears
@@ -44,11 +50,14 @@ export const MapView = ({ onMarkerClick }) => {
 						.setLngLat(coordinates)
 						.setHTML(
 							`<div>
-								<button class="marker-heart-icon">♡</button>${name} - ${type}
+								<button class="marker-heart-icon">${heartIcon}</button>${name} - ${type}
 							</div>
 						`
 						)
 						.addTo(map);
+
+					// using document.getElementsByClassName didn't seem to register properly so the event never fired
+					// always certain the first child is the button, based on the html for the popup
 					popup._content.children[1].addEventListener("click", (e) => {
 						if (e.target.className === "marker-heart-icon") {
 							onMarkerClick({ name, type });
@@ -67,11 +76,5 @@ export const MapView = ({ onMarkerClick }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	return (
-		<div
-			style={{ width: "100%" }}
-			ref={mapContainer}
-			className="map-container"
-		/>
-	);
+	return <div style={{ width: "100%", height: "100%" }} ref={mapContainer} />;
 };

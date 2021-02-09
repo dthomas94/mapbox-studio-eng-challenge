@@ -3,37 +3,40 @@ import "./app.css";
 import { MapView } from "./mapView";
 import { List as FavoritesList } from "./common/list";
 
+const getIndexOfItem = (list, item) =>
+	list.findIndex(({ name }) => item.name === name);
+
 const Favorite = ({ favorite }) => (
-	<div>
+	<>
 		<button>♥️</button>
 		<span>{`${favorite.name} - ${favorite.type}`}</span>
-	</div>
+	</>
 );
 
 const App = () => {
-	console.log("rerendered");
 	const [favorites, setFavorites] = useState([]);
 
-	const removeFavorite = (index) => {
-		const updatedFavorites = [...favorites];
+	const removeFavorite = (oldFaves, index) => {
+		const updatedFavorites = [...oldFaves];
 		updatedFavorites.splice(index, 1);
-		setFavorites(updatedFavorites);
+		return updatedFavorites;
 	};
-	const addFavorite = (item) => {
-		const updatedFavorites = [...favorites];
+	const addFavorite = (oldFaves, item) => {
+		const updatedFavorites = [...oldFaves];
 		updatedFavorites.push(item);
-		setFavorites(updatedFavorites);
+		return updatedFavorites;
 	};
-	const handleMarkerClick = (item) => {
-		const indexOfFavorite = favorites.findIndex(
-			({ name }) => item.name === name
-		);
 
-		if (indexOfFavorite === -1) {
-			addFavorite(item);
-		} else {
-			removeFavorite(indexOfFavorite);
-		}
+	const handleMarkerClick = (item) => {
+		setFavorites((prevState) => {
+			const indexOfFavorite = getIndexOfItem(prevState, item);
+			if (indexOfFavorite === -1) {
+				const updatedFaves = addFavorite(prevState, item);
+				return updatedFaves;
+			}
+			const updatedFaves = removeFavorite(prevState, indexOfFavorite);
+			return updatedFaves;
+		});
 	};
 
 	return (
@@ -52,9 +55,15 @@ const App = () => {
 			</div>
 			<div style={{ width: 300 }}>
 				<FavoritesList
+					title="Favorite Places"
 					items={favorites}
 					renderComponent={(favorite) => <Favorite favorite={favorite} />}
-					onListItemClick={(favorite) => removeFavorite(favorite)}
+					onListItemClick={(favorite) => {
+						const indexOfFavorite = getIndexOfItem(favorites, favorite);
+						setFavorites((prevState) =>
+							removeFavorite(prevState, indexOfFavorite)
+						);
+					}}
 				/>
 			</div>
 		</div>
