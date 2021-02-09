@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`List renders 1`] = `
+<List
+  items={Array []}
+  onClickListItem={[MockFunction]}
+  renderComponent={[MockFunction]}
+  title="Favorites List"
+>
+  <div
+    className="list"
+  >
+    <h3>
+      Favorites List
+    </h3>
+    <ul />
+  </div>
+</List>
+`;

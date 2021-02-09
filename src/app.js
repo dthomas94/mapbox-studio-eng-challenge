@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./app.css";
-import { MapView } from "./mapView";
-import { List as FavoritesList } from "./common/list";
+import { MapView } from "./MapView";
+import { List as FavoritesList } from "./common/List";
 
 const getIndexOfItem = (list, item) =>
 	list.findIndex(({ name }) => item.name === name);
@@ -58,7 +58,7 @@ const App = () => {
 					title="Favorite Places"
 					items={favorites}
 					renderComponent={(favorite) => <Favorite favorite={favorite} />}
-					onListItemClick={(favorite) => {
+					onClickListItem={(favorite) => {
 						const indexOfFavorite = getIndexOfItem(favorites, favorite);
 						setFavorites((prevState) =>
 							removeFavorite(prevState, indexOfFavorite)

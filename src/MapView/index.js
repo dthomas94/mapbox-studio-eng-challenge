@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import mapboxGl from "mapbox-gl";
-import style from "./data/style.json";
+import style from "../data/style.json";
 
 // If there are issues, replace with your token
 const ACCESS_TOKEN =
@@ -44,6 +44,7 @@ export const MapView = ({ favorites, onMarkerClick }) => {
 
 					map.flyTo({
 						center: coordinates,
+						zoom: 15,
 					});
 
 					const popup = new mapboxGl.Popup({ offset: 15 })
@@ -56,7 +57,7 @@ export const MapView = ({ favorites, onMarkerClick }) => {
 						)
 						.addTo(map);
 
-					// using document.getElementsByClassName didn't seem to register properly so the event never fired
+					// using document.getElementsByClassName and iterating over the "list" didn't seem to register properly so the event never fired
 					// always certain the first child is the button, based on the html for the popup
 					popup._content.children[1].addEventListener("click", (e) => {
 						if (e.target.className === "marker-heart-icon") {
@@ -76,5 +77,5 @@ export const MapView = ({ favorites, onMarkerClick }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	return <div style={{ width: "100%", height: "100%" }} ref={mapContainer} />;
+	return <div className="map-container" ref={mapContainer} />;
 };
