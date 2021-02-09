@@ -30,14 +30,23 @@ Run `npm start` to start the app in development mode.
 
 Run `npm test` to run tests.
 
--React testing library over enzyme - (https://testing-library.com/docs/guiding-principles/)
-(https://kentcdodds.com/blog/testing-implementation-details)
-(https://www.robinwieruch.de/react-testing-library)
+### Technical Decisions
 
-- test because it helps with this: [Avoid Nesting When You're Testing](https://kentcdodds.com/blog/avoid-nesting-when-youre-testing)
+#### Packages
 
--Updated React - use hooks
--Updated react scripts - to use latest version of jest
--Update react dom - to be in sync with latest react
+1. Updated react package to be able to use hooks - functional programming makes testing easier and components inherently simpler/more intentional. This especially was important to me because there is a lot of misuse the lifecycle methods in class components. Hooks force you to think about why/what you are trying to accomplish.
+2. Updated react-scripts package to be able to use latest version of jest
+3. Updated react-dom to be in sync with latest react version
+4. Added package for unofficial enzyme adapat to be able to support React v17
 
--Used functional components and hooks
+#### Challenges
+
+##### Mapbox-gl
+
+Initially setting up mapbox-gl was simple. The documentation is well laid out for getting up and running. The biggest hurdle was understanding layers and how they come into play with map events. A lot of the documentation, if not all, explains how to work with custom markers, but the markers for this map were already setup because of the style attribute passed to the map.
+
+##### Testing
+
+Testing a React app generally isn't difficult, but with the added code for native dom events being handled within a mapbox instance proved challenging. Ultimately, I decided not to dive deep into testing the map itself because I know the package has its own test suite.
+
+For improvement, I would have liked to also add cypress tests to assert the happy path of user flows (adding/removing favorites).
