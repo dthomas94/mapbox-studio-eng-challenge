@@ -5,12 +5,13 @@ import { List as FavoritesList } from "./common/list";
 
 const Favorite = ({ favorite }) => (
 	<div>
-		<span>♥️</span>
+		<button>♥️</button>
 		<span>{`${favorite.name} - ${favorite.type}`}</span>
 	</div>
 );
 
 const App = () => {
+	console.log("rerendered");
 	const [favorites, setFavorites] = useState([]);
 
 	const removeFavorite = (index) => {
@@ -24,27 +25,32 @@ const App = () => {
 		setFavorites(updatedFavorites);
 	};
 	const handleMarkerClick = (item) => {
-		const indexOfFavorite = favorites.indexOf(item);
-		if (indexOfFavorite !== -1) {
-			removeFavorite(indexOfFavorite);
-		} else {
+		const indexOfFavorite = favorites.findIndex(
+			({ name }) => item.name === name
+		);
+
+		if (indexOfFavorite === -1) {
 			addFavorite(item);
+		} else {
+			removeFavorite(indexOfFavorite);
 		}
 	};
 
 	return (
 		<div
-			className="App"
 			style={{
 				display: "flex",
 				flexDirection: "row",
 				justifyContent: "space-evenly",
 			}}
 		>
-			<div style={{ width: "80%", height: "100vh", maxWidth: 1200 }}>
-				<MapView onMarkerClick={(feature) => handleMarkerClick(feature)} />
+			<div style={{ width: "100%", height: "100vh", maxWidth: 1200 }}>
+				<MapView
+					favorites={favorites}
+					onMarkerClick={(feature) => handleMarkerClick(feature)}
+				/>
 			</div>
-			<div>
+			<div style={{ width: 300 }}>
 				<FavoritesList
 					items={favorites}
 					renderComponent={(favorite) => <Favorite favorite={favorite} />}

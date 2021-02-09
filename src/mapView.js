@@ -1,4 +1,4 @@
-import React, { useEffect, createRef } from "react";
+import React, { useEffect, useRef } from "react";
 import mapboxGl from "mapbox-gl";
 import style from "./data/style.json";
 
@@ -7,7 +7,7 @@ const ACCESS_TOKEN =
 	"pk.eyJ1IjoiZGFzdWxpdCIsImEiOiJjaXQzYmFjYmkwdWQ5MnBwZzEzZnNub2hhIn0.EDJ-lIfX2FnKhPw3nqHcqg";
 
 export const MapView = ({ onMarkerClick }) => {
-	const mapContainer = createRef();
+	const mapContainer = useRef();
 	const containerEl = mapContainer;
 
 	useEffect(() => {
@@ -20,10 +20,10 @@ export const MapView = ({ onMarkerClick }) => {
 				zoom: 15,
 			});
 
-			map.on("load", function (e) {
+			map.on("load", () => {
 				// When a click event occurs on a feature in the places poi-label layer, open a popup at the
 				// location of the feature, with description HTML from its properties.
-				map.on("click", "poi-label", function (e) {
+				map.on("click", "poi-label", (e) => {
 					const selectedFeature = e.features[0];
 					const coordinates = selectedFeature.geometry.coordinates.slice();
 					const name = selectedFeature.properties.name;
@@ -40,31 +40,38 @@ export const MapView = ({ onMarkerClick }) => {
 						center: coordinates,
 					});
 
-					new mapboxGl.Popup({ offset: 15 })
+					const popup = new mapboxGl.Popup({ offset: 15 })
 						.setLngLat(coordinates)
 						.setHTML(
-							`
-							<div>
-								<span
-									id='marker-heart-icon'
-								>
-									♡
-								</span>
-								${name} - ${type}
+							`<div>
+								<button class="marker-heart-icon">♡</button>${name} - ${type}
 							</div>
 						`
 						)
 						.addTo(map);
+					popup._content.children[1].addEventListener("click", (e) => {
+						if (e.target.className === "marker-heart-icon") {
+							onMarkerClick({ name, type });
+						}
+					});
+				});
+				map.on("mouseenter", "poi-label", function () {
+					map.getCanvas().style.cursor = "pointer";
+				});
 
-					document
-						.getElementById("marker-heart-icon")
-						.addEventListener("click", () => {
-							onMarkerClick && onMarkerClick({ name, type });
-						});
+				map.on("mouseleave", "poi-label", function () {
+					map.getCanvas().style.cursor = "";
 				});
 			});
 		}
-	}, [containerEl, onMarkerClick]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
-	return <div ref={mapContainer} className="map-container" />;
+	return (
+		<div
+			style={{ width: "100%" }}
+			ref={mapContainer}
+			className="map-container"
+		/>
+	);
 };
